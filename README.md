@@ -24,9 +24,6 @@ In Fine search by Username
 
 At the end the results can be copied or exported to CSV
 
-Translated with DeepL.com (free version)
-
-
 #  🛠️ Installation of libraries
 
 ```
