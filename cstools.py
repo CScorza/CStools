@@ -131,6 +131,11 @@ async def username_info(username):
             {"url": "https://www.producthunt.com/@{}", "name": "Product Hunt"},
             {"url": "https://www.telegram.me/{}", "name": "Telegram"},
             {"url": "https://www.weheartit.com/{}", "name": "We Heart It"}
+            {"url": "https://truthsocial.com/api/v1/accounts/lookup?acct={username}", "name": "truthsocial"}
+            {"url":"https://api.nostr.wine/search?query={username}", "name": "wine"}
+            {"url":"https://mastodon.social/api/v2/search?q={username}", "name": "mastodon"}
+            {"url":"https://bsky.app/profile/{username}.bsky.social", "name": "BluSky"}
+            {"url":"https://www.snapchat.com/add/{username}", "name": "snapchat"}
         ]
         
         total_sites = len(social_media)
