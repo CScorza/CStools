@@ -26,10 +26,6 @@ At the end the results can be copied or exported to CSV
 
 #  🛠️ Installation of libraries
 
-```
-sudo apt-get install python3.7
-pip install telethon pillow requests phonenumbers
-```
 Download the folder
 ```
 git clone https://github.com/CScorza/CStools
