@@ -1,0 +1,6 @@
+telethon
+requests
+phonenumbers
+pillow
+tk
+aiohttp
