@@ -1,5 +1,5 @@
 
-![Immagine1](https://github.com/CScorza/CStools/assets/98583912/4996b758-20cb-4d59-a3e0-0471b7913eee)
+![image](https://github.com/user-attachments/assets/27d4c4f1-dab4-4cfa-802b-2611b48bb8a7)
 
 Tool for searching information via Telegram, Number Phone and Username.
 
