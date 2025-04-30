@@ -22,6 +22,36 @@ In addition you will have information about the phone number
 In Fine search by Username
 - Great for checking if our username is present in any social network
 
+| #  | Service Name       | Emoji |
+|----|--------------------|--------|
+| 1  | Facebook           | 📘     |
+| 2  | Twitter            | 🐦     |
+| 3  | Instagram          | 📸     |
+| 4  | LinkedIn           | 💼     |
+| 5  | GitHub             | 🐙     |
+| 6  | Pinterest          | 📌     |
+| 7  | Tumblr             | 🌀     |
+| 8  | YouTube            | 📺     |
+| 9  | SoundCloud         | 🎵     |
+|10  | Snapchat           | 👻     |
+|11  | TikTok             | 🎶     |
+|12  | Behance            | 🎨     |
+|13  | Medium             | ✍️     |
+|14  | Quora              | ❓     |
+|15  | Flickr             | 📷     |
+|16  | Periscope          | 🔭     |
+|17  | Twitch             | 🎮     |
+|18  | Dribbble           | 🏀     |
+|19  | StumbleUpon        | 🔀     |
+|20  | Ello               | 👁️     |
+|21  | Product Hunt       | 🚀     |
+|22  | Telegram           | ✈️     |
+|23  | We Heart It        | ❤️     |
+|24  | TruthSocial        | 🗣️     |
+|25  | BluSky             | ☁️     |
+|26  | OpenSea            | 🖼️     |
+|27  | Wattpad            | 📚     |
+
 At the end the results can be copied or exported to CSV
 
 #  🛠️ Installation of libraries
