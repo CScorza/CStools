@@ -153,6 +153,8 @@ async def username_info(username):
             {"url": "https://www.weheartit.com/{}", "name": "We Heart It"},
             {"url": "https://truthsocial.com/@{}", "name": "TruthSocial"},
             {"url": "https://bsky.app/profile/{}.bsky.social", "name": "BluSky"}
+            {"url": "https://opensea.io", "name": "OpenSea"}
+            {"url": "https://www.wattpad.com/user/", "name": "wattpad"}
         ]
 
         total_sites = len(social_media)
