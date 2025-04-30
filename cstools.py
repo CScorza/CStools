@@ -35,9 +35,46 @@ import threading
 import requests
 import re
 
+
+print(r"""
+
+╔══════════════════════════════════════════════════════════════════════╗
+║    _         _   _                _   _           _   _              ║
+║   / \  _   _| |_| |__   ___ _ __ | |_(_) ___ __ _| |_(_) ___  _ __   ║
+║  / _ \| | | | __| '_ \ / _ \ '_ \| __| |/ __/ _` | __| |/ _ \| '_ \  ║
+║ / ___ \ |_| | |_| | | |  __/ | | | |_| | (_| (_| | |_| | (_) | | | | ║
+║/_/   \_\__,_|\__|_| |_|\___|_| |_|\__|_|\___\__,_|\__|_|\___/|_| |_| ║
+║    _    ____ ___   _____    _                                        ║
+║   / \  |  _ \_ _| |_   _|__| | ___  __ _ _ __ __ _ _ __ ___          ║
+║  / _ \ | |_) | |    | |/ _ \ |/ _ \/ _` | '__/ _` | '_ ` _ \         ║
+║ / ___ \|  __/| |    | |  __/ |  __/ (_| | | | (_| | | | | | |        ║
+║/_/   \_\_|  |___|   |_|\___|_|\___|\__, |_|  \__,_|_| |_| |_|        ║
+║                                    |___/                             ║
+║                                                                      ║
+║                        CScorza - CStools v.2                         ║ 
+╚══════════════════════════════════════════════════════════════════════╝                                   
+IT - Prima di avviare lo script, devi inserire le tue api e completare l'autenticazione     
+
+EN - Before starting the script, you need to enter your APIs and complete the authentication
+
+- Site: https://my.telegram.org/apps
+                 
+""")
+
 # === Telegram API Auth ===
-api_id = input("Inserisci il tuo API ID di Telegram: ").strip()
-api_hash = input("Inserisci il tuo API HASH di Telegram: ").strip()
+config_path = "auth_config.json"
+if os.path.exists(config_path):
+    with open(config_path, "r") as f:
+        data = json.load(f)
+        api_id = data.get("api_id", "").strip()
+        api_hash = data.get("api_hash", "").strip()
+else:
+    api_id = input("Enter your Telegram API ID: ").strip()
+    api_hash = input("Enter your Telegram API HASH: ").strip()
+    save = input("Do you want to save these APIs for future launches? (Yes/No): ").strip().lower()
+    if save == "yes":
+        with open(config_path, "w") as f:
+            json.dump({"api_id": api_id, "api_hash": api_hash}, f)
 
 client = TelegramClient("anon", api_id, api_hash)
 
@@ -153,8 +190,6 @@ async def username_info(username):
             {"url": "https://www.weheartit.com/{}", "name": "We Heart It"},
             {"url": "https://truthsocial.com/@{}", "name": "TruthSocial"},
             {"url": "https://bsky.app/profile/{}.bsky.social", "name": "BluSky"}
-            {"url": "https://opensea.io", "name": "OpenSea"}
-            {"url": "https://www.wattpad.com/user/", "name": "wattpad"}
         ]
 
         total_sites = len(social_media)
