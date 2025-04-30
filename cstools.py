@@ -1,30 +1,52 @@
+import sys
+import subprocess
+import os
+
+# === Install requirements in a virtual environment ===
+if __name__ == "__main__" and not os.environ.get("INSIDE_VENV"):
+    venv_dir = os.path.join(os.getcwd(), ".venv")
+    python_exe = os.path.join(venv_dir, "Scripts", "python.exe") if os.name == "nt" else os.path.join(venv_dir, "bin", "python")
+
+    if not os.path.exists(python_exe):
+        print("[+] Creazione virtualenv...")
+        subprocess.check_call([sys.executable, "-m", "venv", venv_dir])
+
+    print("[+] Attivazione virtualenv e installazione requirements.txt...")
+    subprocess.check_call([python_exe, "-m", "pip", "install", "--upgrade", "pip"])
+    subprocess.check_call([python_exe, "-m", "pip", "install", "-r", "requirements.txt"])
+
+    print("[+] Riavvio dello script all'interno della virtualenv...")
+    os.environ["INSIDE_VENV"] = "1"
+    os.execv(python_exe, [python_exe] + sys.argv)
+    
 import tkinter as tk
-from tkinter import Scrollbar, ttk  # Import ttk for Progressbar
-from PIL import Image, ImageTk  # Import PIL library for working with images
-from telethon.sync import TelegramClient
-from telethon import functions
-from telethon.tl.functions.channels import GetParticipantsRequest
-from telethon.tl.types import ChannelParticipantsSearch, ChannelParticipantsAdmins
+from tkinter import simpledialog, ttk, messagebox
+from PIL import Image, ImageTk
+from telethon import TelegramClient, functions, errors
+from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.functions.channels import GetFullChannelRequest
+from telethon.tl.types import ChannelParticipantsSearch
 import phonenumbers
 from phonenumbers import carrier, number_type, PhoneNumberType, is_possible_number, is_valid_number
 import json
-import webbrowser  # Import the webbrowser module to open links
+import webbrowser
 import asyncio
 import threading
 import requests
 import re
 
-# Initialize the Telegram client https://my.telegram.org/auth
-api_id = 'Inserisci qui API ID'  # Replace with your API ID
-api_hash = 'Inserisci qui API HASH'  # Replace with your API Hash
+# === Telegram API Auth ===
+api_id = input("Inserisci il tuo API ID di Telegram: ").strip()
+api_hash = input("Inserisci il tuo API HASH di Telegram: ").strip()
+
 client = TelegramClient("anon", api_id, api_hash)
 
-# Functions to execute different queries
+# === Functions to execute different queries ===
 async def get_user_data(user_id):
     try:
         user = await client.get_entity(user_id)
-        full_user = await client(functions.users.GetFullUserRequest(id=user_id))
-        bio = full_user.about if hasattr(full_user, 'about') else "N/A"
+        full_user = await client(GetFullUserRequest(id=user.id))
+        bio = full_user.full_user.about if hasattr(full_user.full_user, 'about') else "N/A"
         name = f"{user.first_name} {user.last_name if user.last_name else ''}".strip()
         username = f"@{user.username}" if user.username else "N/A"
         return f"\nName: {name}\nUsername: {username}\nBio: {bio}"
@@ -35,20 +57,18 @@ async def get_group_members(channel_input):
     try:
         if channel_input.startswith("https://"):
             channel_input = channel_input.split("/")[-1]
-        
-        channel_entity = await client.get_entity(channel_input)
-        full_channel = await client(functions.channels.GetFullChannelRequest(channel=channel_entity))
 
-        # Ottieni la lista completa dei partecipanti del canale/gruppo
+        channel_entity = await client.get_entity(channel_input)
+        full_channel = await client(GetFullChannelRequest(channel=channel_entity))
+
         participants = []
         async for participant in client.iter_participants(channel_entity):
             participants.append(participant)
-            progress = int((len(participants) / full_channel.full_chat.participants_count) * 100)
+            progress = int((len(participants) / (full_channel.full_chat.participants_count or 1)) * 100)
             percentage.set(f"{progress}%")
             progress_bar['value'] = progress
-            await asyncio.sleep(0.01)  # Simulate work being done
+            await asyncio.sleep(0.01)
 
-        # Creazione di una lista dei partecipanti
         members_list = ""
         for participant in participants:
             members_list += f"{participant.id} - {participant.first_name} {participant.last_name if participant.last_name else ''}\n"
@@ -131,49 +151,39 @@ async def username_info(username):
             {"url": "https://www.producthunt.com/@{}", "name": "Product Hunt"},
             {"url": "https://www.telegram.me/{}", "name": "Telegram"},
             {"url": "https://www.weheartit.com/{}", "name": "We Heart It"},
-            {"url": "https://truthsocial.com/api/v1/accounts/lookup?acct={username}", "name": "truthsocial"},
-            {"url": "https://api.nostr.wine/search?query={username}", "name": "wine"},
-            {"url": "https://mastodon.social/api/v2/search?q={username}", "name": "mastodon"},
-            {"url": "https://bsky.app/profile/{username}.bsky.social", "name": "BluSky"},
-            {"url": "https://www.snapchat.com/add/{username}", "name": "snapchat"},
+            {"url": "https://truthsocial.com/@{}", "name": "TruthSocial"},
+            {"url": "https://bsky.app/profile/{}.bsky.social", "name": "BluSky"}
         ]
-        
+
         total_sites = len(social_media)
         for i, site in enumerate(social_media):
-            url = site['url'].format(username)
-            response = requests.get(url)
-            if response.status_code == 200:
-                results[site['name']] = url
-            else:
-                results[site['name']] = "Nessun RISULTATO"
+            try:
+                url = site['url'].format(username)
+                response = requests.get(url, timeout=5)
+                results[site['name']] = url if response.status_code == 200 else "Nessun RISULTATO"
+            except requests.RequestException:
+                results[site['name']] = "Errore richiesta"
+
             progress = int(((i + 1) / total_sites) * 100)
             percentage.set(f"{progress}%")
             progress_bar['value'] = progress
-            await asyncio.sleep(0.1)  # Simulate work being done
+            await asyncio.sleep(0.1)
 
-        # Format results with clickable links and red color for "Nessun RISULTATO"
-        formatted_results = []
-        for site, url in results.items():
-            if url.startswith("http"):
-                if url == "Nessun RISULTATO":
-                    formatted_results.append(f"{site}: <font color='red'>{url}</font>")
-                else:
-                    formatted_results.append(f"{site}: {url}")
-            else:
-                formatted_results.append(f"{site}: {url}")
-
-        info_str = "\n".join(formatted_results)
-        return f"{info_str}\n\nCaricamento completato!"
+        formatted_results = [f"{site}: {link}" for site, link in results.items()]
+        return f"\n".join(formatted_results) + "\n\nCaricamento completato!"
 
     except Exception as e:
         return f"Errore: {e}"
 
 def make_clickable(widget):
-    text = widget.get("1.0", "end")
-    urls = re.findall(r'(https?://\S+)', text)
-    for url in urls:
-        widget.tag_config("link", foreground="blue", underline=1)
-        widget.tag_bind("link", "<Button-1>", lambda event, link=url: webbrowser.open_new(link))
+    try:
+        text = widget.get("1.0", "end")
+        urls = re.findall(r'(https?://\S+)', text)
+        for url in urls:
+            widget.tag_config("link", foreground="blue", underline=1)
+            widget.tag_bind("link", "<Button-1>", lambda event, link=url: webbrowser.open_new(link))
+    except Exception as e:
+        print(f"Errore nei link cliccabili: {e}")
 
 # Function to start the Telegram client
 async def start_client():
