@@ -38,13 +38,13 @@ python3 cstools.py
 Enter the phone number of your Telegram account in the field provided
 https://my.telegram.org/auth 
 
-Next, search for and enter in the items below the API ID and API HASH
+Enter your Telegram API here and wait to configure the script correctly before starting to use it, to avoid errors
+![2025-04-30 16_03_46-Kali Linux - VMware Workstation](https://github.com/user-attachments/assets/ea504865-e8c9-451c-8c1b-0af7db95472c)
 
-![Immagini API Telegram](https://github.com/CScorza/CStools/assets/98583912/b7799504-5f3a-4c88-a8aa-70fb5888a096)
 
 Started the tool enter the generated Telegram token into the terminal.
 
-![image](https://github.com/CScorza/CStools/assets/98583912/074ce86d-2746-4d1d-8701-56811ecd23d3)
+![image](https://github.com/user-attachments/assets/73242a60-7687-4f80-8fa2-698f7d71e70e)
 
 # 📝 License
 GNU General Public License v3.0
